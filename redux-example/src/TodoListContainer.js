@@ -3,6 +3,7 @@ import React, { Component, Fragment} from 'react';
 import ToDoItem from './ToDoItem';
 import store from './store';
 import { change_input_value, add_todo_item, delete_todo_item, init_list_data} from './store/actionType';
+import { getInputChangeAction, getAddTodoAction, getIDeleteTodoAction, initListData} from './store/actionCreator';
 import TodoListUI from './TodoListUI';
 // import axios from 'axios';
 
@@ -29,11 +30,13 @@ class TodoListContainer extends Component {
   componentDidMount() {
     setTimeout(function() {
       let data = [1, 2, 3];
-      const action = {
-        type: init_list_data,
-        data
-      };
-      store.dispatch(action);
+      // const action = {
+      //   type: init_list_data,
+      //   data
+      // };
+      // store.dispatch(action);
+
+      store.dispatch(initListData(data));
     }, 2000);
   }
 
@@ -48,25 +51,32 @@ class TodoListContainer extends Component {
       type: add_todo_item // 告诉store需要如何处理
     };
     store.dispatch(action); // 将信息传递给store
+
+    // store.dispatch(getAddTodoAction) // 报错Error: Actions must be plain objects. Use custom middleware for async actions.
   }
 
   // 输入框变化
   handleInputChange(e) {
-    const action = {
-      type: change_input_value,
-      value: e.target.value // 输入框的内容
-    };
-    store.dispatch(action);
+    // const action = {
+    //   type: change_input_value,
+    //   value: e.target.value // 输入框的内容
+    // };
+    // store.dispatch(action);
+
+    const value = e.target.value; // 输入框的内容
+    store.dispatch(getInputChangeAction(value));
   }
 
   handleDelete(index) {
     console.log('delete-parent,index=', index);
 
-    const action = {
-      type: delete_todo_item,
-      index
-    };
-    store.dispatch(action);
+    // const action = {
+    //   type: delete_todo_item,
+    //   index
+    // };
+    // store.dispatch(action);
+
+    store.dispatch(getIDeleteTodoAction(index));
   }
 
   getTodoItems() {
