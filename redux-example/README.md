@@ -351,6 +351,45 @@ export default TodoListUI;
 
 
 
+无状态组件
+
+上面的 UI 组件 TodoListUI.js ，没有用到 state 、生命钩子等，可以改写成无状态组件（无状态组件性能更高）：
+
+```jsx
+import React, { Component, Fragment} from 'react';
+import ToDoItem from './ToDoItem';
+
+const TodoListUI = (props)=> {
+    // props即父组件传递过来的数据
+    return (
+        <Fragment>
+          <div>
+            <input className='red-border' value={props.inputValue} onChange={props.handleInputChange}/>
+            <button style={{background: 'green'}} onClick={props.handleBtnClick}>add</button>
+          </div>
+          <ul>
+            {
+              props.list.map((item, index) => {
+                return (
+                  <ToDoItem 
+                    del={props.handleDelete}
+                    content={item} key={index}
+                    index={index}
+                  />
+                );
+              })
+            }
+          </ul>
+        </Fragment>
+    );
+};
+
+export default TodoListUI;
+
+```
+
+一个组件仅有 render 时，适合作为无状态组件。
+
 
 
 React Redux - `connect()` 方法
