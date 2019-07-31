@@ -1,8 +1,12 @@
+// TodoListContainer容器组件
 import React, { Component, Fragment} from 'react';
 import ToDoItem from './ToDoItem';
 import store from './store';
+import { change_input_value, add_todo_item, delete_todo_item} from './store/actionType';
 
-class App extends Component {
+import TodoListUI from './TodoListUI';
+
+class TodoListContainer extends Component {
   constructor(props) {
     super(props);
     console.log('store.getState()=', store.getState());
@@ -24,7 +28,7 @@ class App extends Component {
   // 点击按钮
   handleBtnClick() {
     const action = {
-      type: 'add_todo_item' // 告诉store需要如何处理
+      type: add_todo_item // 告诉store需要如何处理
     };
     store.dispatch(action); // 将信息传递给store
   }
@@ -32,7 +36,7 @@ class App extends Component {
   // 输入框变化
   handleInputChange(e) {
     const action = {
-      type: 'change_input_value',
+      type: change_input_value,
       value: e.target.value // 输入框的内容
     };
     store.dispatch(action);
@@ -42,7 +46,7 @@ class App extends Component {
     console.log('delete-parent,index=', index);
 
     const action = {
-      type: 'delete_todo_item',
+      type: delete_todo_item,
       index
     };
     store.dispatch(action);
@@ -65,29 +69,15 @@ class App extends Component {
   // 父组件通过属性向子组件传递参数，子组件通过props接收参数
   render() {
     return (
-      <Fragment>
-        <div>
-          <input className='red-border' value={this.state.inputValue} onChange={this.handleInputChange}/>
-          <button style={{background: 'green'}} onClick={this.handleBtnClick}>add</button>
-        </div>
-        <ul>
-          {
-            this.getTodoItems()
-            // this.state.list.map((item, index) => {
-            //   return (
-            //     <ToDoItem 
-            //       del={this.handleDelete}
-            //       content={item} key={index}
-            //       index={index}
-            //     />
-            //   );
-            //   // return <li key={index} onClick={this.handleItem.bind(this, index)}>{item}</li>
-            // })
-          }
-        </ul>
-      </Fragment>
+      <TodoListUI
+        inputValue={this.state.inputValue}
+        handleInputChange={this.handleInputChange}
+        handleBtnClick={this.handleBtnClick}
+        list={this.state.list}
+        handleDelete={this.handleDelete}
+      />
     );
   }
 }
 
-export default App;
+export default TodoListContainer;
