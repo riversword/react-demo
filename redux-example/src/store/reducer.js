@@ -1,6 +1,6 @@
 // reducer接收 旧的state和action，返回新的state
 
-import { change_input_value, add_todo_item, delete_todo_item} from './actionType'
+import { change_input_value, add_todo_item, delete_todo_item, init_list_data} from './actionType'
 
 // 默认的state
 const defaultState = {
@@ -13,6 +13,12 @@ const defaultState = {
 
 export default (state = defaultState, action) => {
     console.log('action=', action);
+    if (action.type === init_list_data) {
+        const newState = JSON.parse(JSON.stringify(state)); // 注意不能直接修改state，要拷贝一份
+        newState.list = action.data;
+        return newState;
+    }
+
     if (action.type === change_input_value) {
         const newState = JSON.parse(JSON.stringify(state)); // 注意不能直接修改state，要拷贝一份
         newState.inputValue = action.value;

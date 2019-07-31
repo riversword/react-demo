@@ -2,9 +2,15 @@
 import React, { Component, Fragment} from 'react';
 import ToDoItem from './ToDoItem';
 import store from './store';
-import { change_input_value, add_todo_item, delete_todo_item} from './store/actionType';
-
+import { change_input_value, add_todo_item, delete_todo_item, init_list_data} from './store/actionType';
 import TodoListUI from './TodoListUI';
+// import axios from 'axios';
+
+// function axios() {
+//   setTimeout(function() {
+
+//   }, 2000);
+// }
 
 class TodoListContainer extends Component {
   constructor(props) {
@@ -18,6 +24,17 @@ class TodoListContainer extends Component {
     this.handleStoreChange = this.handleStoreChange.bind(this);
 
     store.subscribe(this.handleStoreChange); // 当store发生变化时
+  }
+
+  componentDidMount() {
+    setTimeout(function() {
+      let data = [1, 2, 3];
+      const action = {
+        type: init_list_data,
+        data
+      };
+      store.dispatch(action);
+    }, 2000);
   }
 
   // store发生变化
