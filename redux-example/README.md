@@ -14,9 +14,9 @@ yarn add redux
 
 
 
-创建 store：
+### store
 
-store 通过 redux 中的 createStore 方法创建，createStore 接受reducer 作为参数。
+store 通过 redux 中的 createStore 方法创建，createStore 接受 reducer 作为参数。
 
 ```js
 // store/index.js
@@ -32,7 +32,9 @@ export default store;
 
 
 
-reducer 是一个函数，它接收旧的state和action，返回新的state。
+### reducer 
+
+reducer 是一个函数，它接收旧的 state 和 action，返回新的 state。
 
 ```js
 // store/reducer.js
@@ -73,7 +75,9 @@ export default (state = defaultState, action) => {
 
 
 
-在组件中与 store 进行通信。`store.getState()` 可以获取到 store 中的 state，通过 `store.dispatch(action)` 可以对 store 中的数据进行修改（由 reducer 来做）， `store.subscribe(this.handleStoreChange)` 当 store 发生变化时就会执行 `this.handleStoreChange` 。
+### 在组件中与 store 进行通信。
+
+`store.getState()` 可以获取到 store 中的 state，通过 `store.dispatch(action)` 可以对 store 中的数据进行修改（由 reducer 来做）， `store.subscribe(this.handleStoreChange)` 当 store 发生变化时就会执行 `this.handleStoreChange` 。
 
 ```jsx
 // app.js
@@ -201,11 +205,11 @@ export default store;
 
 
 
-
+### UI 组件和容器组件
 
 UI 组件负责展示，容器组件负责将 store 传递给 UI 组件。
 
-上面的 `app.js` 可改为如下形式作为一个容器组件，它获取到 store 中的数据后，通过 props 传递给 UI 组件。
+上面的 `app.js` 可改为如下形式作为一个容器组件，它通过 `store.getState()` 获取到 store 中的数据，再通过 props 传递给 UI 组件。并且在初始化时订阅了一个方法， `store.subscribe(this.handleStoreChange)` ，每当 store 变化时，就会执行 `this.handleStoreChange`，获取到最新的 store.state 传递给 UI 组件。同时定义了一些封装好的 `dispatch` 方法，也通过 props 传递给 UI 组件，UI 组件就实现了获取 store 和 修改 store。
 
 ```jsx
 // TodoListContainer.js 容器组件
@@ -262,20 +266,6 @@ class TodoListContainer extends Component {
     store.dispatch(action);
   }
 
-  getTodoItems() {
-    return (
-      this.state.list.map((item, index) => {
-        return (
-          <ToDoItem 
-            del={this.handleDelete}
-            content={item} key={index}
-            index={index}
-          />
-        );
-      })
-    )
-  }
-
   // 父组件通过属性向子组件传递参数，子组件通过props接收参数
   render() {
     return (
@@ -295,7 +285,7 @@ export default TodoListContainer;
 
 
 
-
+UI 组件 `TodoListUI.js`
 
 ```jsx
 // TodoListUI.js
@@ -303,20 +293,6 @@ import React, { Component, Fragment} from 'react';
 import ToDoItem from './ToDoItem';
 
 class TodoListUI extends Component {
-
-  getTodoItems() {
-    return (
-      this.props.list.map((item, index) => {
-        return (
-          <ToDoItem 
-            del={this.props.handleDelete(index)}
-            content={item} key={index}
-            index={index}
-          />
-        );
-      })
-    )
-  }
 
   // 父组件通过属性向子组件传递参数，子组件通过props接收参数
   render() {
@@ -328,7 +304,6 @@ class TodoListUI extends Component {
         </div>
         <ul>
           {
-            // this.getTodoItems()
             this.props.list.map((item, index) => {
               return (
                 <ToDoItem 
@@ -337,7 +312,6 @@ class TodoListUI extends Component {
                   index={index}
                 />
               );
-              // return <li key={index} onClick={this.handleItem.bind(this, index)}>{item}</li>
             })
           }
         </ul>
@@ -351,9 +325,9 @@ export default TodoListUI;
 
 
 
-无状态组件
+### 无状态组件
 
-上面的 UI 组件 TodoListUI.js ，没有用到 state 、生命钩子等，可以改写成无状态组件（无状态组件性能更高）：
+上面的 UI 组件 `TodoListUI.js` ，没有用到 state 、生命钩子等，可以改写成无状态组件（无状态组件性能更高）：
 
 ```jsx
 import React, { Component, Fragment} from 'react';
@@ -402,11 +376,129 @@ redux-thunk
 
 
 
-React Redux - `connect()` 方法
+## React Redux - `connect()` 方法
 
-上例中的 App.js ,  是通过手工实现的容器组件。技术上讲，容器组件就是使用 [`store.subscribe()`](https://cn.redux.js.org/docs/api/Store.html#subscribe) 从 Redux state 树中读取部分数据，并通过 props 来把这些数据提供给要渲染的组件。
+上例中的 App.js ,  是通过手工实现的容器组件。技术上讲，容器组件就是使用 [`store.subscribe()`](https://cn.redux.js.org/docs/api/Store.html#subscribe) 和 `store.getState()` 订阅读取 Redux state 树中的数据，并通过 props 来把这些数据提供给要渲染的组件。
 
-你可以手工来开发容器组件，但建议使用 React Redux 库的 [`connect()`](https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options) 方法来生成，这个方法做了性能优化来避免很多不必要的重复渲染。（这样你就不必为了性能而手动实现 [React 性能优化建议](https://doc.react-china.org/docs/optimizing-performance.html) 中的 `shouldComponentUpdate` 方法。）
+上面的方式是通过手工来开发容器组件，但更推荐的方式是使用 React Redux 库的 [`connect()`](https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options) 方法来生成，这个方法做了性能优化来避免很多不必要的重复渲染。（这样你就不必为了性能而手动实现 [React 性能优化建议](https://doc.react-china.org/docs/optimizing-performance.html) 中的 `shouldComponentUpdate` 方法。）
 
 使用 `connect()` 前，需要先定义 `mapStateToProps` 这个函数来指定如何把当前 Redux store state 映射到展示组件的 props 中。
+
+安装 react-redux
+
+```bash
+yarn  react-redux
+```
+
+
+
+- 通过 `<Provider store={store}>` 来包裹组件
+
+入口文件 `index.js`，`provider` 内的所有组件都可以访问到 store。
+
+```jsx
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import TodoListContainer from './TodoListContainer';
+import * as serviceWorker from './serviceWorker';
+
+import store from './store';
+import { Provider } from 'react-redux';
+
+ReactDOM.render(
+    // Provider连接了store，Provider内的所有组件都可以获取到store中的内容
+    <Provider store={store}>
+        <TodoListContainer />
+    </Provider>,
+    document.getElementById('root')
+);
+
+serviceWorker.unregister();
+
+```
+
+
+
+- 在容器组件中，通过 connect 连接容器组件与 store
+
+connect 方法接收 3 个参数，函数 `mapStateToProps` 返回的是 store.state 中要传递给组件 props 的数据（对象格式），函数 `mapDispatchToProps` 返回的是能修改更新 store 数据的方法集合（对象格式），也是传递给组件的 props，`component` 是关联 store 的目标组件（容器组件）。
+
+```js
+connect(mapStateToProps, mapDispatchToProps)(component);
+```
+
+
+
+```jsx
+// TodoListContainer容器组件
+import React, { Component } from 'react';
+import { change_input_value, add_todo_item, delete_todo_item, init_list_data} from './store/actionType';
+import { getInputChangeAction, getAddTodoAction, getIDeleteTodoAction, initListData} from './store/actionCreator';
+import TodoListUI from './TodoListUI';
+import { connect } from 'react-redux';
+
+class TodoListContainer extends Component {
+
+  // 父组件通过属性向子组件传递参数，子组件通过props接收参数
+  render() {
+    return (
+      <TodoListUI
+        inputValue={this.props.inputValue}
+        handleInputChange={this.props.handleInputChange}
+        handleBtnClick={this.props.handleBtnClick}
+        list={this.props.list}
+        handleDelete={this.props.handleDelete}
+      />
+    );
+  }
+}
+
+// export default TodoListContainer;
+
+// 将store.state内的数据映射到组件的props
+const mapStateToProps = (state) => {
+  return state;
+  // return {
+  //   inputValue: state.inputValue,
+  //   list: state.list
+  // }
+}
+
+// 将store.dispatch方法传递给props
+const mapDispatchToProps = (dispatch) => {
+  return {
+    // 输入框变化
+    handleInputChange(e) {
+      const value = e.target.value; // 输入框的内容
+      dispatch(getInputChangeAction(value));
+    },
+
+    // 点击按钮
+    handleBtnClick() {
+      const action = {
+        type: add_todo_item // 告诉store需要如何处理
+      };
+      dispatch(action); // 将信息传递给store
+
+      // store.dispatch(getAddTodoAction) // 报错Error: Actions must be plain objects. Use custom middleware for async actions.
+    },
+
+    // 删除
+    handleDelete(index) {
+      console.log('delete-parent,index=', index);
+      dispatch(getIDeleteTodoAction(index));
+    }
+  }
+}
+
+// 连接store和TodoListContainer组件
+export default connect(mapStateToProps, mapDispatchToProps)(TodoListContainer);
+
+```
+
+
+
+优化，上面的 TodoListContainer 容器组件，并未定义逻辑处理的方法，它的数据和方法都是通过 props 来获取，故完全可以将 TodoListContainer 容器组件，定义为一个无状态的组件，如下。
 
