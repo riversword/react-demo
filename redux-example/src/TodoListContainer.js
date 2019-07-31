@@ -5,20 +5,18 @@ import { getInputChangeAction, getAddTodoAction, getIDeleteTodoAction, initListD
 import TodoListUI from './TodoListUI';
 import { connect } from 'react-redux';
 
-class TodoListContainer extends Component {
+const TodoListContainer = (props) => {
 
-  // 父组件通过属性向子组件传递参数，子组件通过props接收参数
-  render() {
-    return (
-      <TodoListUI
-        inputValue={this.props.inputValue}
-        handleInputChange={this.props.handleInputChange}
-        handleBtnClick={this.props.handleBtnClick}
-        list={this.props.list}
-        handleDelete={this.props.handleDelete}
-      />
-    );
-  }
+  // class组件通过render方法返回；function组件直接返回
+  return (
+    <TodoListUI
+      inputValue={props.inputValue}
+      handleInputChange={props.handleInputChange}
+      handleBtnClick={props.handleBtnClick}
+      list={props.list}
+      handleDelete={props.handleDelete}
+    />
+  );
 }
 
 // export default TodoListContainer;
