@@ -392,6 +392,16 @@ export default TodoListUI;
 
 
 
+redux-thunk
+
+
+
+上面中使用的是 redux
+
+
+
+
+
 React Redux - `connect()` 方法
 
 上例中的 App.js ,  是通过手工实现的容器组件。技术上讲，容器组件就是使用 [`store.subscribe()`](https://cn.redux.js.org/docs/api/Store.html#subscribe) 从 Redux state 树中读取部分数据，并通过 props 来把这些数据提供给要渲染的组件。

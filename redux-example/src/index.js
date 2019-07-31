@@ -4,9 +4,13 @@ import './index.css';
 import TodoListContainer from './TodoListContainer';
 import * as serviceWorker from './serviceWorker';
 import store from './store';
+import { Provider } from 'react-redux';
 
 ReactDOM.render(
-    <TodoListContainer />,
+    // Provider连接了store，Provider内的所有组件都可以获取到store中的内容
+    <Provider store={store}>
+        <TodoListContainer />
+    </Provider>,
     document.getElementById('root')
 );
 

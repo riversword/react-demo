@@ -6,6 +6,7 @@ import { change_input_value, add_todo_item, delete_todo_item, init_list_data} fr
 import { getInputChangeAction, getAddTodoAction, getIDeleteTodoAction, initListData} from './store/actionCreator';
 import TodoListUI from './TodoListUI';
 // import axios from 'axios';
+import { connect } from 'react-redux';
 
 // function axios() {
 //   setTimeout(function() {
@@ -107,4 +108,6 @@ class TodoListContainer extends Component {
   }
 }
 
-export default TodoListContainer;
+// export default TodoListContainer;
+
+export default connect(null, null)(TodoListContainer);
